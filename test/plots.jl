@@ -356,7 +356,7 @@ function scheme_description()
     display(fig)
 end
 
-function main()
+function test()
     gen_gif()
     topview()
     model_description()
