@@ -2,9 +2,11 @@ module FSimPlots
 
 
 using FlightSims
-import Plots
+using Plots
+import Plots: plot, plot!
 using Transducers
 using UnPack
+using LinearAlgebra
 
 export plot, plot!
 

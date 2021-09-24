@@ -12,7 +12,7 @@ function Plots.plot!(fig::Plots.Plot, multicopter::MulticopterEnv, state;
         xlabel="E (m)", ylabel="N (m)", zlabel="U (m)",
         kwargs...)
     @unpack l = multicopter
-    airframe_ref = airframe_reference(multicopter)
+    airframe_ref = FlightSims.airframe_reference(multicopter)
     @unpack p, v, R, ω = state
     p_enu = ned2enu(p)
     body_n = R'*[1, 0, 0]  # B to I
