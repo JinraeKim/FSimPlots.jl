@@ -52,7 +52,7 @@ function circle_shape(c, r, h; phase=0.0)
     end
     normal_vec2 = cross(h, normal_vec1)
     normal_vec2 = normal_vec2 / norm(normal_vec2)
-    θs = LinRange(0, 2*π-1e-2, 200)
+    θs = LinRange(0, 2*π-1e-2, 300)
     circle = θs |> Map(θ -> c + r*cos(θ+phase)*normal_vec1 + r*sin(θ+phase)*normal_vec2) |> collect
     circle_1 = circle |> Map(p -> p[1]) |> collect
     circle_2 = circle |> Map(p -> p[2]) |> collect

@@ -200,7 +200,7 @@ function prob_description()
           ls=:dash,
           label="",
          )
-    savefig(fig, "figures/prob_description.pdf")
+    savefig(fig, "figures/prob_description.png")
     display(fig)
 end
 

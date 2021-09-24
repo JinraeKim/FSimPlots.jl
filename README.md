@@ -20,4 +20,4 @@ You can find the following examples from `test/plots.jl`.
 ![ex_screenshot](./figures/hexacopter_description.png)
 
 ### Problem description for hexacopter control
-![ex_screenshot](./figures/prob_description.pdf.png)
+![ex_screenshot](./figures/prob_description.png)
