@@ -1,18 +1,18 @@
 """
-    plot!(multicopter::MulticopterEnv, fig, state)
+    plot!(multicopter::Multicopter, fig, state)
 
 # Variables
 fig: figure object, i.e., fig = plot()
-state: see `State(env::MulticopterEnv)`.
+state: see `State(env::Multicopter)`.
 # Notes
 Default configuration: ENU-coordinate system.
 For airframe references, see https://docs.px4.io/master/en/airframes/airframe_reference.html.
 """
-function Plots.plot!(fig::Plots.Plot, multicopter::MulticopterEnv, state;
+function Plots.plot!(fig::Plots.Plot, multicopter::Multicopter, state;
         xlabel="E (m)", ylabel="N (m)", zlabel="U (m)",
         kwargs...)
     @unpack l = multicopter
-    airframe_ref = FlightSims.airframe_reference(multicopter)
+    airframe_ref = FSimZoo.airframe_reference(multicopter)
     @unpack p, v, R, ω = state
     p_enu = ned2enu(p)
     body_n = R'*[1, 0, 0]  # B to I
@@ -29,7 +29,7 @@ function Plots.plot!(fig::Plots.Plot, multicopter::MulticopterEnv, state;
     fig
 end
 
-function Plots.plot(multicopter::MulticopterEnv, state; kwargs...)
+function Plots.plot(multicopter::Multicopter, state; kwargs...)
     fig = plot()
     plot!(fig, multicopter, state; kwargs...)
     fig
