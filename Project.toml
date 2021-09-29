@@ -12,6 +12,7 @@ UnPack = "3a884ed6-31ef-47d7-9d2a-63182c4928ed"
 
 [compat]
 FSimZoo = "0.2"
+Plots = "1.22"
 Transducers = "0.4"
 UnPack = "1.0"
 julia = "1"
