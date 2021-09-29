@@ -1,4 +1,5 @@
 using FSimPlots
+using FSimZoo
 using FlightSims
 const FS = FlightSims
 using Plots  # you should use `Plots` as well
@@ -6,30 +7,30 @@ using Plots  # you should use `Plots` as well
 gr()
 # ENV["GKSwstype"] = "nul"
 using LinearAlgebra
+using DiffEqCallbacks
 using Transducers
-using DifferentialEquations
 using UnPack
 using ReferenceFrameRotations
 
 
 function gen_gif()
-    multicopter = LeeHexacopterEnv()
+    multicopter = LeeHexacopter()
     @unpack m, g = multicopter
     x0 = State(multicopter)()
     anim = Animation()
     function affect!(integrator)
         state = copy(integrator.u)
         fig = plot(multicopter, state;
-              xlim=(-1, 1), ylim=(-1, 1), zlim=(-1, 20),
-              camera=(45, 45),
-             )
+                   xlim=(-1, 1), ylim=(-1, 1), zlim=(-1, 20),
+                   camera=(45, 45),
+                  )
         frame(anim)
     end
     Δt = 0.1
     tf = 10.0
     cb = PeriodicCallback(affect!, Δt)
-    function Dynamics!(multicopter::MulticopterEnv)
-        FS.__Dynamics!(multicopter)
+    function Dynamics!(multicopter::Multicopter)
+        FSimZoo.__Dynamics!(multicopter)
     end
     prob, df = sim(x0,
                    apply_inputs(Dynamics!(multicopter);
@@ -37,13 +38,14 @@ function gen_gif()
                                 M=zeros(3),
                                );
                    tf=tf,
-                   callback=cb)
+                   callback=cb,
+                  )
     gif(anim, "figures/anim.gif", fps=60)
     nothing
 end
 
 function topview()
-    multicopter = LeeHexacopterEnv()
+    multicopter = LeeHexacopter()
     x0 = State(multicopter)()
     fig = plot(multicopter, x0;
                ticks=nothing, border=:none,
@@ -56,7 +58,7 @@ function topview()
 end
 
 function model_description()
-    multicopter = LeeHexacopterEnv()
+    multicopter = LeeHexacopter()
     x0 = State(multicopter)()
     length_param = 0.5
     x0.p += [length_param, length_param, -length_param]  # NED
@@ -156,7 +158,7 @@ function model_description()
 end
 
 function prob_description()
-    multicopter = LeeHexacopterEnv()
+    multicopter = LeeHexacopter()
     x0 = State(multicopter)()
     Δt = 0.1
     traj_des_func = (t) -> [-0.75, -0.75, 0.75]*(1-t)^3 + (-0.5)*ones(3)*(1-t)^2*t + (-1)*ones(3)*(1-t)*t^2
@@ -204,9 +206,7 @@ function prob_description()
     display(fig)
 end
 
-function test()
-    gen_gif()
-    topview()
-    model_description()
-    prob_description()
-end
+gen_gif()
+topview()
+model_description()
+prob_description()
