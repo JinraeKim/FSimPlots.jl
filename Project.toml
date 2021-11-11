@@ -1,7 +1,7 @@
 name = "FSimPlots"
 uuid = "de610439-98db-48ec-87cd-a9843b890493"
 authors = ["JinraeKim <kjl950403@gmail.com> and contributors"]
-version = "0.2.0"
+version = "0.2.1"
 
 [deps]
 FSimZoo = "e2d5807d-1594-43f7-91a6-54c6eef5a9d2"
