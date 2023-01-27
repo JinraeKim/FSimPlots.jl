@@ -22,5 +22,9 @@ You can find the following examples from `test/plots.jl`.
 ### Problem description for hexacopter control
 ![ex_screenshot](./figures/prob_description.png)
 
+### Hexacopter alone
+![ex_screenshot](./figures/hexacopter_alone.png)
+
+
 ## Used in other projects
 - [JinraeKim/KSAS2021Fall](https://github.com/JinraeKim/KSAS2021Fall)

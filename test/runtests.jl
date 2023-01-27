@@ -1,28 +1,26 @@
 using FSimPlots
 using FSimZoo
 using FlightSims
-const FS = FlightSims
 using Plots  # you should use `Plots` as well
 
 gr()
 # ENV["GKSwstype"] = "nul"
 using LinearAlgebra
-using DiffEqCallbacks
+using DifferentialEquations
 using Transducers
-using UnPack
 using ReferenceFrameRotations
 
 
 function gen_gif()
     multicopter = LeeHexacopter()
-    @unpack m, g = multicopter
+    (; m, g) = multicopter
     x0 = State(multicopter)()
     anim = Animation()
     function affect!(integrator)
         state = copy(integrator.u)
         fig = plot(multicopter, state;
                    xlim=(-1, 1), ylim=(-1, 1), zlim=(-1, 20),
-                   camera=(45, 45),
+                   # camera=(45, 45),
                   )
         frame(anim)
     end
@@ -32,14 +30,14 @@ function gen_gif()
     function Dynamics!(multicopter::Multicopter)
         FSimZoo.__Dynamics!(multicopter)
     end
-    prob, df = sim(x0,
-                   apply_inputs(Dynamics!(multicopter);
-                                f=(state, p, t) -> m*g + (0.5*tf-t),
-                                M=zeros(3),
-                               );
-                   tf=tf,
-                   callback=cb,
-                  )
+    simulator = Simulator(x0,
+                          apply_inputs(Dynamics!(multicopter);
+                                       f=(state, p, t) -> m*g + (0.5*tf-t),
+                                       M=zeros(3),
+                                      );
+                          tf=tf,
+                         )
+    df = solve(simulator; callback=cb)
     gif(anim, "figures/anim.gif", fps=60)
     nothing
 end
@@ -64,7 +62,7 @@ function model_description()
     x0.p += [length_param, length_param, -length_param]  # NED
     ϕ, θ, ψ = 0, deg2rad(30), 0
     x0.R = ReferenceFrameRotations.angle_to_dcm(ψ, θ, ϕ, :ZYX)
-    @unpack p, R = x0
+    (; p, R) = x0
     p_enu = ned2enu(p)
     # plot
     fig = plot3d(;)
@@ -150,7 +148,7 @@ function model_description()
           xlim=(-2*length_param, 2*length_param),
           ylim=(-2*length_param, 2*length_param),
           zlim=(-2*length_param, 2*length_param),
-          camera=(45, 45),
+          # camera=(45, 45),
           # dpi=300,
          )
     savefig(fig, "figures/hexacopter_description.png")
@@ -206,7 +204,29 @@ function prob_description()
     display(fig)
 end
 
+function hexacopter_alone()
+    multicopter = LeeHexacopter()
+    x0 = State(multicopter)()
+    traj_des_func = (t) -> [-0.75, -0.75, 0.75]*(1-t)^3 + (-0.5)*ones(3)*(1-t)^2*t + (-1)*ones(3)*(1-t)*t^2
+    η = 0.2
+    x0.p = traj_des_func(η)
+    x0.R = ReferenceFrameRotations.angle_to_dcm(0, deg2rad(-0), deg2rad(15), :ZYX)
+    fig = plot()
+    plot!(fig,
+          multicopter, x0;
+          ticks=nothing, border=:none,
+          # background_color=:transparent,
+          xlabel="", ylabel="", zlabel="",
+          xlim=(-1.0, 0.1), ylim=(-1.0, 0.1), zlim=(-1.0, 0.1),
+          # camera=(45, 45),
+          dpi=300,
+         )
+    savefig(fig, "figures/hexacopter_alone.png")
+    display(fig)
+end
+
 gen_gif()
 topview()
 model_description()
 prob_description()
+hexacopter_alone()
