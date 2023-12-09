@@ -215,7 +215,7 @@ function hexacopter_alone()
     plot!(fig,
           multicopter, x0;
           ticks=nothing, border=:none,
-          # background_color=:transparent,
+          background_color=:transparent,
           xlabel="", ylabel="", zlabel="",
           xlim=(-1.0, 0.1), ylim=(-1.0, 0.1), zlim=(-1.0, 0.1),
           # camera=(45, 45),
@@ -225,8 +225,11 @@ function hexacopter_alone()
     display(fig)
 end
 
-gen_gif()
-topview()
-model_description()
-prob_description()
-hexacopter_alone()
+
+@testset "FSimPlots.jl" begin
+    gen_gif()
+    topview()
+    model_description()
+    prob_description()
+    hexacopter_alone()
+end
