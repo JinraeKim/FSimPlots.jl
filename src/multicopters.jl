@@ -11,13 +11,14 @@ For airframe references, see https://docs.px4.io/master/en/airframes/airframe_re
 function Plots.plot!(fig::Plots.Plot, multicopter::Multicopter, state;
         xlabel="E (m)", ylabel="N (m)", zlabel="U (m)",
         kwargs...)
-    @unpack l = multicopter
+    (; l) = multicopter
     airframe_ref = FSimZoo.airframe_reference(multicopter)
-    @unpack p, v, R, ω = state
+    (; p, v, q, ω) = state
+    R = quat2dcm(q)
     p_enu = ned2enu(p)
-    body_n = R'*[1, 0, 0]  # B to I
-    body_e = R'*[0, 1, 0]  # B to I
-    body_u = R'*[0, 0, -1]  # B to I
+    body_n = R*[1, 0, 0]  # B to I
+    body_e = R*[0, 1, 0]  # B to I
+    body_u = R*[0, 0, -1]  # B to I
     # plotting
     plot!(fig;
           xlabel=xlabel, ylabel=ylabel, zlabel=zlabel,
@@ -53,10 +54,14 @@ function circle_shape(c, r, h; phase=0.0)
     normal_vec2 = cross(h, normal_vec1)
     normal_vec2 = normal_vec2 / norm(normal_vec2)
     θs = LinRange(0, 2*π-1e-2, 300)
-    circle = θs |> Map(θ -> c + r*cos(θ+phase)*normal_vec1 + r*sin(θ+phase)*normal_vec2) |> collect
-    circle_1 = circle |> Map(p -> p[1]) |> collect
-    circle_2 = circle |> Map(p -> p[2]) |> collect
-    circle_3 = circle |> Map(p -> p[3]) |> collect
+    circle = [(c + r*cos(θ+phase)*normal_vec1 + r*sin(θ+phase)*normal_vec2) for θ in θs]
+    circle_1 = [p[1] for p in circle]
+    circle_2 = [p[2] for p in circle]
+    circle_3 = [p[3] for p in circle]
+    # circle = θs |> Map(θ -> c + r*cos(θ+phase)*normal_vec1 + r*sin(θ+phase)*normal_vec2) |> collect
+    # circle_1 = circle |> Map(p -> p[1]) |> collect
+    # circle_2 = circle |> Map(p -> p[2]) |> collect
+    # circle_3 = circle |> Map(p -> p[3]) |> collect
     circle_1, circle_2, circle_3
 end
 
@@ -77,13 +82,19 @@ function triangle_shape(c, h1, h2, l1, l2)
     h3 = h3 / norm(h3)
     l3 = l2
     ts = LinRange(0, 1, 200)
-    triangle_A = ts |> Map(t -> (c + l1*h1)*t + (c + l2*h2)*(1-t)) |> collect
-    triangle_B = ts |> Map(t -> (c + l2*h2)*t + (c + l3*h3)*(1-t)) |> collect
-    triangle_C = ts |> Map(t -> (c + l3*h3)*t + (c + l1*h1)*(1-t)) |> collect
+    triangle_A = [(c + l1*h1)*t + (c + l2*h2)*(1-t) for t in ts]
+    triangle_B = [(c + l2*h2)*t + (c + l3*h3)*(1-t) for t in ts]
+    triangle_C = [(c + l3*h3)*t + (c + l1*h1)*(1-t) for t in ts]
+    # triangle_A = ts |> Map(t -> (c + l1*h1)*t + (c + l2*h2)*(1-t)) |> collect
+    # triangle_B = ts |> Map(t -> (c + l2*h2)*t + (c + l3*h3)*(1-t)) |> collect
+    # triangle_C = ts |> Map(t -> (c + l3*h3)*t + (c + l1*h1)*(1-t)) |> collect
     triangle = vcat(triangle_A, triangle_B, triangle_C)
-    triangle_1 = triangle |> Map(p -> p[1]) |> collect
-    triangle_2 = triangle |> Map(p -> p[2]) |> collect
-    triangle_3 = triangle |> Map(p -> p[3]) |> collect
+    triangle_1 = [p[1] for p in triangle]
+    triangle_2 = [p[2] for p in triangle]
+    triangle_3 = [p[3] for p in triangle]
+    # triangle_1 = triangle |> Map(p -> p[1]) |> collect
+    # triangle_2 = triangle |> Map(p -> p[2]) |> collect
+    # triangle_3 = triangle |> Map(p -> p[3]) |> collect
     triangle_1, triangle_2, triangle_3
 end
 
@@ -92,10 +103,10 @@ function plot_fuselage!(fig::Plots.Plot, p, R, l, body_n, body_e)
     body_n_enu = ned2enu(body_n)
     body_e_enu = ned2enu(body_e)
     length_ratio = 0.3
-    point_1 = p + length_ratio*l*R'*[1, 0, 0]  # R': B to I
-    point_2 = p + length_ratio*l*R'*[0, 1, 0]
-    point_3 = p + length_ratio*l*R'*[-1, 0, 0]
-    point_4 = p + length_ratio*l*R'*[0, -1, 0]
+    point_1 = p + length_ratio*l*R*[1, 0, 0]  # R': B to I
+    point_2 = p + length_ratio*l*R*[0, 1, 0]
+    point_3 = p + length_ratio*l*R*[-1, 0, 0]
+    point_4 = p + length_ratio*l*R*[0, -1, 0]
     boundary_12_enu = ned2enu.(LinRange(point_1, point_2, 100))
     boundary_23_enu = ned2enu.(LinRange(point_2, point_3, 100))
     boundary_34_enu = ned2enu.(LinRange(point_3, point_4, 100))
@@ -138,12 +149,12 @@ end
 
 function rotor_positions(p0, R, l, airframe_ref)
     if airframe_ref == :hexa_x
-        pf_1 = p0 + l*R'*[0, 1, 0]  # R': B to I
-        pf_2 = p0 + l*R'*[0, -1, 0]
-        pf_3 = p0 + l*R'*[cos(deg2rad(-30)), sin(deg2rad(-30)), 0]
-        pf_4 = p0 + l*R'*[cos(deg2rad(150)), sin(deg2rad(150)), 0]
-        pf_5 = p0 + l*R'*[cos(deg2rad(30)), sin(deg2rad(30)), 0]
-        pf_6 = p0 + l*R'*[cos(deg2rad(210)), sin(deg2rad(210)), 0]
+        pf_1 = p0 + l*R*[0, 1, 0]  # R': B to I
+        pf_2 = p0 + l*R*[0, -1, 0]
+        pf_3 = p0 + l*R*[cos(deg2rad(-30)), sin(deg2rad(-30)), 0]
+        pf_4 = p0 + l*R*[cos(deg2rad(150)), sin(deg2rad(150)), 0]
+        pf_5 = p0 + l*R*[cos(deg2rad(30)), sin(deg2rad(30)), 0]
+        pf_6 = p0 + l*R*[cos(deg2rad(210)), sin(deg2rad(210)), 0]
         return [pf_1, pf_2, pf_3, pf_4, pf_5, pf_6]
     else
         error("Invalid airframe reference")
