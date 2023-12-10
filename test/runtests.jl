@@ -21,7 +21,7 @@ function gen_gif()
         state = copy(integrator.u)
         fig = plot(multicopter, state;
                    xlim=(-1, 1), ylim=(-1, 1), zlim=(-1, 20),
-                   background_color=:transparent,
+                   # background_color=:transparent,
                    # camera=(45, 45),
                   )
         frame(anim)
