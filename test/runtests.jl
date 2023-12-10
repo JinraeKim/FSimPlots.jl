@@ -1,3 +1,4 @@
+using Test
 using FSimPlots
 using FSimZoo
 using FlightSims
@@ -20,6 +21,7 @@ function gen_gif()
         state = copy(integrator.u)
         fig = plot(multicopter, state;
                    xlim=(-1, 1), ylim=(-1, 1), zlim=(-1, 20),
+                   background_color=:transparent,
                    # camera=(45, 45),
                   )
         frame(anim)
@@ -47,7 +49,7 @@ function topview()
     x0 = State(multicopter)()
     fig = plot(multicopter, x0;
                ticks=nothing, border=:none,
-               # background_color=:transparent,
+               background_color=:transparent,
                xlabel="", ylabel="", zlabel="",
                camera=(0, 90),
                dpi=300,
@@ -143,7 +145,7 @@ function model_description()
     # BE CAREFUL; figures w.r.t. ENU
     plot!(fig, multicopter, x0;
           ticks=nothing, border=:none,
-          # background_color=:transparent,
+          background_color=:transparent,
           xlabel="", ylabel="", zlabel="",
           xlim=(-2*length_param, 2*length_param),
           ylim=(-2*length_param, 2*length_param),
@@ -170,7 +172,7 @@ function prob_description()
     plot!(fig,
           multicopter, x0;
           ticks=nothing, border=:none,
-          # background_color=:transparent,
+          background_color=:transparent,
           xlabel="", ylabel="", zlabel="",
           xlim=(-1.0, 0.1), ylim=(-1.0, 0.1), zlim=(-1.0, 0.1),
           dpi=300,
@@ -227,6 +229,7 @@ end
 
 
 @testset "FSimPlots.jl" begin
+    mkpath("figures")
     gen_gif()
     topview()
     model_description()
