@@ -156,6 +156,12 @@ function rotor_positions(p0, R, l, airframe_ref)
         pf_5 = p0 + l*R*[cos(deg2rad(30)), sin(deg2rad(30)), 0]
         pf_6 = p0 + l*R*[cos(deg2rad(210)), sin(deg2rad(210)), 0]
         return [pf_1, pf_2, pf_3, pf_4, pf_5, pf_6]
+    elseif airframe_ref == :quad_plus
+        pf_1 = p0 + l*R*[0, 1, 0]  # R': B to I
+        pf_2 = p0 + l*R*[0, -1, 0]
+        pf_3 = p0 + l*R*[1, 0, 0]  # R': B to I
+        pf_4 = p0 + l*R*[-1, 0, 0]
+        return [pf_1, pf_2, pf_3, pf_4]
     else
         error("Invalid airframe reference")
     end
@@ -172,16 +178,28 @@ function plot_rotor!(fig::Plots.Plot, p, r, body_u, color, opacity)
 end
 
 function plot_circles!(fig::Plots.Plot, p0, R, l, r, body_u, airframe_ref, color_cw, color_ccw, opacity)
+    pfs = rotor_positions(p0, R, l, airframe_ref)
     if airframe_ref == :hexa_x
-        pf_1, pf_2, pf_3, pf_4, pf_5, pf_6 = rotor_positions(p0, R, l, airframe_ref)
-        plot_rotor!(fig, pf_1, r, body_u, color_cw, opacity)
-        plot_rotor!(fig, pf_2, r, body_u, color_ccw, opacity)
-        plot_rotor!(fig, pf_3, r, body_u, color_cw, opacity)
-        plot_rotor!(fig, pf_4, r, body_u, color_ccw, opacity)
-        plot_rotor!(fig, pf_5, r, body_u, color_ccw, opacity)
-        plot_rotor!(fig, pf_6, r, body_u, color_cw, opacity)
+        colors = [
+            color_cw,
+            color_ccw,
+            color_cw,
+            color_ccw,
+            color_ccw,
+            color_cw,
+        ]
+    elseif airframe_ref == :quad_plus
+        colors = [
+            color_ccw,
+            color_ccw,
+            color_cw,
+            color_cw,
+        ]
     else
         error("Invalid airframe reference")
+    end
+    for (pf, color) in zip(pfs, colors)
+        plot_rotor!(fig, pf, r, body_u, color, opacity)
     end
 end
 
@@ -224,6 +242,17 @@ function plot_frames!(fig::Plots.Plot, p0, R, l, airframe_ref)
         plot_frame!(fig, p0_4, pf_4)  # 4
         plot_frame!(fig, p0_5, pf_5)  # 5
         plot_frame!(fig, p0_6, pf_6)  # 6
+    elseif airframe_ref == :quad_plus
+        pf_1, pf_2, pf_3, pf_4 = rotor_positions(p0, R, l, airframe_ref)
+        ratio = 0.3
+        p0_1 = (1-ratio)*p0 + ratio*pf_1
+        p0_2 = (1-ratio)*p0 + ratio*pf_2
+        p0_3 = (1-ratio)*p0 + ratio*pf_3
+        p0_4 = (1-ratio)*p0 + ratio*pf_4
+        plot_frame!(fig, p0_1, pf_1)  # 1
+        plot_frame!(fig, p0_2, pf_2)  # 2
+        plot_frame!(fig, p0_3, pf_3)  # 3
+        plot_frame!(fig, p0_4, pf_4)  # 4
     else
         error("Invalid airframe reference")
     end

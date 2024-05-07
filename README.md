@@ -9,12 +9,15 @@ See [FSimBase.jl](https://github.com/JinraeKim/FSimBase.jl) for the lightweight 
 ## Multicopters
 See `src/multicopters.jl`.
 
-You can find the following examples from `test/plots.jl`.
+You can find the following examples from the directory `./test`.
 ### Animation
 ![Alt Text](./figures/anim.gif)
 
 ### Top-view image
-![ex_screenshot](./figures/topview.png)
+#### Quad
+![ex_screenshot](./figures/quadcopter_topview.png)
+#### Hexa
+![ex_screenshot](./figures/hexacopter_topview.png)
 
 ### Reference frame and hexacopter
 ![ex_screenshot](./figures/hexacopter_description.png)
@@ -22,8 +25,11 @@ You can find the following examples from `test/plots.jl`.
 ### Problem description for hexacopter control
 ![ex_screenshot](./figures/prob_description.png)
 
-### Hexacopter alone
-![ex_screenshot](./figures/hexacopter_alone.png)
+### Multicopters
+#### Quad
+![ex_screenshot](./figures/quadcopter.png)
+#### Hexa
+![ex_screenshot](./figures/hexacopter.png)
 
 
 ## Used in other projects
