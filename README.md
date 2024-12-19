@@ -6,6 +6,12 @@ FSimPlots.jl is detached from FlightSims.jl to improve the precompilation overlo
 See [FSimBase.jl](https://github.com/JinraeKim/FSimBase.jl) for the lightweight version of FlightSims.jl.
 
 # Examples
+## VTOL (Vertical Take-off and Landing vehicles)
+See `src/vtols.jl`.
+#### Lift+Cruise VTOL
+![ex_screenshot](./figures/VTOL.png)
+
+
 ## Multicopters
 See `src/multicopters.jl`.
 
@@ -34,3 +40,6 @@ You can find the following examples from the directory `./test`.
 
 ## Used in other projects
 - [JinraeKim/KSAS2021Fall](https://github.com/JinraeKim/KSAS2021Fall)
+- Jinrae Kim, John L. Bullock, Sheng Cheng, and Naira Hovakimyan, “Smooth Reference
+Command Generation and Control for Transition Flight of VTOL Aircraft Using Time-Varying
+Optimization,” in AIAA SciTech 2025 Forum, Orlando, FL, Jan. 2025.
