@@ -1,4 +1,4 @@
-# Changes in v0.3.0
+# Changes in v0.5.0
 - A visualization for VTOL aircraft is added.
 
 # Changes in v0.2.0

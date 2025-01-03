@@ -1,7 +1,7 @@
 name = "FSimPlots"
 uuid = "de610439-98db-48ec-87cd-a9843b890493"
 authors = ["JinraeKim <kjl950403@gmail.com> and contributors"]
-version = "0.4.1"
+version = "0.5.0"
 
 [deps]
 FSimZoo = "e2d5807d-1594-43f7-91a6-54c6eef5a9d2"
@@ -9,7 +9,7 @@ LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 
 [compat]
-FSimZoo = "0.11"
+FSimZoo = "0.12"
 Plots = "1.22"
 julia = "1"
 
