@@ -1,3 +1,6 @@
+# Changes in v0.5.0
+- A visualization for VTOL aircraft is added.
+
 # Changes in v0.2.0
 - Change internal codes corresponding to [FSimZoo.jl, #4](https://github.com/JinraeKim/FSimZoo.jl/pull/4).
 - Change dependencies.

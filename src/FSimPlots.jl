@@ -8,6 +8,7 @@ using LinearAlgebra
 
 
 include("multicopters.jl")
+include("vtols.jl")
 
 
 end

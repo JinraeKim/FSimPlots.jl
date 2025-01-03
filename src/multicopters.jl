@@ -36,32 +36,34 @@ function Plots.plot(multicopter::Multicopter, state; kwargs...)
     fig
 end
 
+
 """
 c: centre
 r: radius
 h: direction of normal vector
 """
 function circle_shape(c, r, h; phase=0.0)
-    normal_vec1 = nothing
+    vec1 = nothing
     while true
         rand_vec = rand(3)
-        normal_vec1 = cross(h, rand_vec)
-        if norm(normal_vec1) > 0
-            normal_vec1 = normal_vec1 / norm(normal_vec1)
+        vec1 = cross(h, rand_vec)
+        if norm(vec1) > 0
+            vec1 = vec1 / norm(vec1)
             break
         end
     end
-    normal_vec2 = cross(h, normal_vec1)
-    normal_vec2 = normal_vec2 / norm(normal_vec2)
+    vec2 = cross(h, vec1)
+    vec2 = vec2 / norm(vec2)
+    return ellipse_shape(c, r, r, vec1, vec2; phase=0.0)
+end
+
+
+function ellipse_shape(c, r1, r2, vec1, vec2; phase=0.0)
     θs = LinRange(0, 2*π-1e-2, 300)
-    circle = [(c + r*cos(θ+phase)*normal_vec1 + r*sin(θ+phase)*normal_vec2) for θ in θs]
+    circle = [(c + r1*cos(θ+phase)*vec1 + r2*sin(θ+phase)*vec2) for θ in θs]
     circle_1 = [p[1] for p in circle]
     circle_2 = [p[2] for p in circle]
     circle_3 = [p[3] for p in circle]
-    # circle = θs |> Map(θ -> c + r*cos(θ+phase)*normal_vec1 + r*sin(θ+phase)*normal_vec2) |> collect
-    # circle_1 = circle |> Map(p -> p[1]) |> collect
-    # circle_2 = circle |> Map(p -> p[2]) |> collect
-    # circle_3 = circle |> Map(p -> p[3]) |> collect
     circle_1, circle_2, circle_3
 end
 
